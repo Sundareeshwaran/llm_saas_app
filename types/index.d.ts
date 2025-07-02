@@ -89,3 +89,7 @@ interface CompanionCardProps {
   duration: number;
   color: string;
 }
+
+interface CompanionSessionPageProps {
+  params: Promise<{ id: string }>;
+}
