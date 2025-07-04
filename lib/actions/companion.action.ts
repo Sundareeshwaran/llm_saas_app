@@ -158,6 +158,7 @@ export const addBookmark = async (companionId: string, path: string) => {
     {
       companion_id: companionId,
       user_id: userId,
+      bookmarked: true,
     },
     { onConflict: "user_id,companion_id" } // Prevents duplicate entry error
   );

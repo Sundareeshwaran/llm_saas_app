@@ -29,27 +29,24 @@ const CompanionCard = ({
 
   // Local state for bookmark toggle
   const [bookmarked, setBookmarked] = useState(initiallyBookmarked);
-  const [loading, setLoading] = useState(false);
 
+  // Handle add/remove bookmark
   const handleBookmark = async () => {
-    if (loading) return;
-    setLoading(true);
-
     try {
       if (bookmarked) {
         await removeBookmark(id, pathname);
-        setBookmarked(false);
       } else {
         await addBookmark(id, pathname);
-        setBookmarked(true);
       }
+
+      // Toggle state after successful DB action
+      setBookmarked((prev) => !prev);
     } catch (error) {
       console.error("Bookmark error:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
+  // Sync with server if initiallyBookmarked changes (e.g., after revalidation)
   useEffect(() => {
     setBookmarked(initiallyBookmarked);
   }, [initiallyBookmarked]);
@@ -58,11 +55,7 @@ const CompanionCard = ({
     <article className="companion-card" style={{ backgroundColor: color }}>
       <div className="flex justify-between items-center">
         <div className="subject-badge">{subject}</div>
-        <button
-          className="companion-bookmark"
-          onClick={handleBookmark}
-          disabled={loading}
-        >
+        <button className="companion-bookmark" onClick={handleBookmark}>
           <Image
             src={
               bookmarked ? "/icons/bookmark-filled.svg" : "/icons/bookmark.svg"
