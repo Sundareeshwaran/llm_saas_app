@@ -36,8 +36,8 @@ export const configureAssistant = (voice: string, style: string) => {
       useSpeakerBoost: true,
     },
     model: {
-      provider: "openai",
-      model: "gpt-4",
+      provider: "groq",
+      model: "llama-3.1-8b-instant",
       messages: [
         {
           role: "system",
