@@ -1,11 +1,12 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { cn, configureAssistant, getSubjectColor } from "@/lib/utils";
 import { vapi } from "@/lib/vapi.sdk";
-import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
-import soundwaves from "../constants/soundwaves.json";
+import Lottie, { LottieRefCurrentProps } from "lottie-react";
+import soundwaves from "@/constants/soundwaves.json";
+import { addToSessionHistory } from "@/lib/actions/companion.action";
 
 enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -33,15 +34,23 @@ const CompanionComponent = ({
 
   useEffect(() => {
     if (lottieRef) {
-      if (isSpeaking) lottieRef.current?.play();
-      else lottieRef.current?.stop();
+      if (isSpeaking) {
+        lottieRef.current?.play();
+      } else {
+        lottieRef.current?.stop();
+      }
     }
   }, [isSpeaking, lottieRef]);
 
   useEffect(() => {
     const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
-    const onCallEnd = () => setCallStatus(CallStatus.FINISHED);
-    const onCallMessage = (message: Message) => {
+
+    const onCallEnd = () => {
+      setCallStatus(CallStatus.FINISHED);
+      addToSessionHistory(companionId);
+    };
+
+    const onMessage = (message: Message) => {
       if (message.type === "transcript" && message.transcriptType === "final") {
         const newMessage = { role: message.role, content: message.transcript };
         setMessages((prev) => [newMessage, ...prev]);
@@ -51,11 +60,11 @@ const CompanionComponent = ({
     const onSpeechStart = () => setIsSpeaking(true);
     const onSpeechEnd = () => setIsSpeaking(false);
 
-    const onError = (error: Error) => console.log("Error: ", error);
+    const onError = (error: Error) => console.log("Error", error);
 
     vapi.on("call-start", onCallStart);
     vapi.on("call-end", onCallEnd);
-    vapi.on("message", onCallMessage);
+    vapi.on("message", onMessage);
     vapi.on("error", onError);
     vapi.on("speech-start", onSpeechStart);
     vapi.on("speech-end", onSpeechEnd);
@@ -63,7 +72,7 @@ const CompanionComponent = ({
     return () => {
       vapi.off("call-start", onCallStart);
       vapi.off("call-end", onCallEnd);
-      vapi.off("message", onCallMessage);
+      vapi.off("message", onMessage);
       vapi.off("error", onError);
       vapi.off("speech-start", onSpeechStart);
       vapi.off("speech-end", onSpeechEnd);
@@ -89,13 +98,13 @@ const CompanionComponent = ({
     vapi.start(configureAssistant(voice, style), assistantOverrides);
   };
 
-  const handleDisconnect = async () => {
+  const handleDisconnect = () => {
     setCallStatus(CallStatus.FINISHED);
     vapi.stop();
   };
 
   return (
-    <section className="flex flex-col h-[70ch]">
+    <section className="flex flex-col h-[70vh]">
       <section className="flex gap-8 max-sm:flex-col">
         <div className="companion-section">
           <div
@@ -121,6 +130,7 @@ const CompanionComponent = ({
                 className="max-sm:w-fit"
               />
             </div>
+
             <div
               className={cn(
                 "absolute transition-opacity duration-1000",
@@ -130,7 +140,7 @@ const CompanionComponent = ({
               <Lottie
                 lottieRef={lottieRef}
                 animationData={soundwaves}
-                autoPlay={false}
+                autoplay={false}
                 className="companion-lottie"
               />
             </div>
@@ -149,7 +159,11 @@ const CompanionComponent = ({
             />
             <p className="font-bold text-2xl">{userName}</p>
           </div>
-          <button className="btn-mic" onClick={toggleMicrophone}>
+          <button
+            className="btn-mic"
+            onClick={toggleMicrophone}
+            disabled={callStatus !== CallStatus.ACTIVE}
+          >
             <Image
               src={isMuted ? "/icons/mic-off.svg" : "/icons/mic-on.svg"}
               alt="mic"
@@ -157,7 +171,7 @@ const CompanionComponent = ({
               height={36}
             />
             <p className="max-sm:hidden">
-              {isMuted ? "Turn on Microphone" : "Turn off Microphone"}
+              {isMuted ? "Turn on microphone" : "Turn off microphone"}
             </p>
           </button>
           <button
@@ -178,13 +192,15 @@ const CompanionComponent = ({
           </button>
         </div>
       </section>
+
       <section className="transcript">
         <div className="transcript-message no-scrollbar">
           {messages.map((message, index) => {
             if (message.role === "assistant") {
               return (
                 <p key={index} className="max-sm:text-sm">
-                  {name.split(" ")[0].replace(/[.,]/g, "")}: {message.content}
+                  {name.split(" ")[0].replace("/[.,]/g, ", "")}:{" "}
+                  {message.content}
                 </p>
               );
             } else {

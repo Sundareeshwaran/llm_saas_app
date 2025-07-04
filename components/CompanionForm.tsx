@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -20,18 +21,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { subjects } from "@/constants";
+import { Textarea } from "@/components/ui/textarea";
 import { createCompanion } from "@/lib/actions/companion.action";
 import { redirect } from "next/navigation";
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: "Companion is required" }),
-  subject: z.string().min(1, { message: "Subject is required" }),
-  topic: z.string().min(1, { message: "Topic is required" }),
-  voice: z.string().min(1, { message: "Voice is required" }),
-  style: z.string().min(1, { message: "Style is required" }),
-  duration: z.coerce.number().min(1, { message: "Durations is required" }),
+  name: z.string().min(1, { message: "Companion is required." }),
+  subject: z.string().min(1, { message: "Subject is required." }),
+  topic: z.string().min(1, { message: "Topic is required." }),
+  voice: z.string().min(1, { message: "Voice is required." }),
+  style: z.string().min(1, { message: "Style is required." }),
+  duration: z.coerce.number().min(1, { message: "Duration is required." }),
 });
 
 const CompanionForm = () => {
@@ -53,9 +54,11 @@ const CompanionForm = () => {
     if (companion) {
       redirect(`/companions/${companion.id}`);
     } else {
-      console.log("Failed to create companion.");
+      console.log("Failed to create a companion");
+      redirect("/");
     }
   };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -64,10 +67,10 @@ const CompanionForm = () => {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Companion Name</FormLabel>
+              <FormLabel>Companion name</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="Enter the Companion Name - ex: Adam"
+                  placeholder="Enter the companion name"
                   {...field}
                   className="input"
                 />
@@ -89,7 +92,7 @@ const CompanionForm = () => {
                   defaultValue={field.value}
                 >
                   <SelectTrigger className="input capitalize">
-                    <SelectValue placeholder="Select the subject - ex: Math" />
+                    <SelectValue placeholder="Select the subject" />
                   </SelectTrigger>
                   <SelectContent>
                     {subjects.map((subject) => (
@@ -116,7 +119,7 @@ const CompanionForm = () => {
               <FormLabel>What should the companion help with?</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Ex. Derivatives & Integrals"
+                  placeholder="Ex. Derivates & Integrals"
                   {...field}
                   className="input"
                 />
@@ -125,12 +128,13 @@ const CompanionForm = () => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="voice"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Voice Type</FormLabel>
+              <FormLabel>Voice</FormLabel>
               <FormControl>
                 <Select
                   onValueChange={field.onChange}
@@ -138,7 +142,7 @@ const CompanionForm = () => {
                   defaultValue={field.value}
                 >
                   <SelectTrigger className="input">
-                    <SelectValue placeholder="Select the Voice" />
+                    <SelectValue placeholder="Select the voice" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="male">Male</SelectItem>
@@ -155,7 +159,7 @@ const CompanionForm = () => {
           name="style"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Speaking Style</FormLabel>
+              <FormLabel>Style</FormLabel>
               <FormControl>
                 <Select
                   onValueChange={field.onChange}
@@ -163,7 +167,7 @@ const CompanionForm = () => {
                   defaultValue={field.value}
                 >
                   <SelectTrigger className="input">
-                    <SelectValue placeholder="Select the Style" />
+                    <SelectValue placeholder="Select the style" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="formal">Formal</SelectItem>
@@ -175,6 +179,7 @@ const CompanionForm = () => {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="duration"

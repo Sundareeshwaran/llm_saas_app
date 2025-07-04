@@ -5,6 +5,7 @@
     "supabase",
     "Vapi",
     "soundwaves",
-    "deepgram"
+    "deepgram",
+    "vercel"
   ]
 }
