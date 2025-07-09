@@ -42,7 +42,7 @@ This project aims to simplify building reliable, user-friendly learning platform
 - 🧱 **Modular UI Components**: Consistent, accessible, and scalable components for rapid UI development.
 - 🚀 **Next.js Optimization**: Automatic font, image handling, and deployment configurations.
 - 🔐 **Secure Authentication**: Seamless user login, session management, and access control via Clerk.
-- 🧠 **AI & Voice Interactions**: Real-time voice-enabled companions for engaging learning experiences.
+- 🧠 **AI & Voice Interactions**: Real-time voice-enabled companions for engaging learning experiences via Vapi AI.
 
 ---
 
