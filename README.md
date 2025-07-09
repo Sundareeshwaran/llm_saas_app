@@ -1,4 +1,4 @@
-# LMS_SAAS_APP
+# LMS SAAS APP
 
 _Empowering Learning Through Intelligent, Seamless Experiences_
 
