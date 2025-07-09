@@ -2,7 +2,6 @@
 
 _Empowering Learning Through Intelligent, Seamless Experiences_
 
-![Last Commit](https://img.shields.io/badge/last%20commit-yesterday-blue)
 ![TypeScript](https://img.shields.io/badge/typescript-89.5%25-blue)
 ![Languages](https://img.shields.io/badge/languages-3-blue)
 
